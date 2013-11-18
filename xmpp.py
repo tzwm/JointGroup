@@ -1,23 +1,24 @@
-import users_manager
+import user_controller
+import chat_controller
 
 import webapp2
 from google.appengine.api import xmpp
+from google.appengine.ext.webapp import xmpp_handlers
 from google.appengine.ext.webapp.util import run_wsgi_app
 
 
-class XMPPHandler(webapp2.RequestHandler):
+class XMPPHandler(xmpp_handlers.CommandHandler):
 
-    def post(self):
+    def text_message(self, message=None):
         message = xmpp.Message(self.request.POST)
-        sender = message.sender.split('/')
-        sender = sender[0]
+        sender = message.sender.split('/')[0]
 
-        userManager = users_manager.UsersManager()
-        userManager.addUser(sender)
+        user_controller.UserController().addUser(sender)
 
-        users = userManager.getAllUsers()
-        for user in users:
-            xmpp.send_message(user.email, message.body)
+        chat_controller.ChatController().sendToAll(sender, message.body)
+
+    def test_command(self, message=None):
+        message.reply("greate.")
 
 
 app = webapp2.WSGIApplication([('/_ah/xmpp/message/chat/', XMPPHandler)],

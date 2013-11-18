@@ -1,6 +1,6 @@
 app.yaml
-.idea/*
 *.pyc
-.ropeproject/*
-
+.ropeproject/
+.idea/
+config.py
 
