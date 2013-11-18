@@ -7,11 +7,18 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 class XMPPHandler(webapp2.RequestHandler):
     def post(self):
         message = xmpp.Message(self.request.POST)
-        message.reply(message.sender)
+        #message.reply(message.sender)
 
         currentUser = debugger.GroupUser()
         currentUser.user_email = message.sender
         currentUser.put()
+        
+        q = debugger.GroupUser.query()
+        users = q.fetch(10)
+
+        for user in users:
+            xmpp.send_message(user.user_email, message.body)
+
         
 
 #app = webapp2.WSGIApplication([('/_ah/xmpp/message/chat/', XMPPHandler)],
