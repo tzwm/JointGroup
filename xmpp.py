@@ -27,6 +27,19 @@ class XMPPHandler(xmpp_handlers.CommandHandler):
             lists = lists + user.email + '\n'
         message.reply(lists)
 
+    def delUser_command(self, message=None):
+        sender  = message.sender.split('/')[0]
+        if not user_controller.UserController.isRootUser(sender):
+            message.reply("Sorry. Permission denied.")
+            return False
+
+        content = message.body.split('/delUser')[1]
+        content = content.strip()
+        if user_controller.UserController.delUser(content):
+            message.reply("Deleted successfully.")
+        else:
+            message.reply("Delete failed.")
+
 
 app = webapp2.WSGIApplication([('/_ah/xmpp/message/chat/', XMPPHandler)],
                               debug=True)

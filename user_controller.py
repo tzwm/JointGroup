@@ -20,14 +20,24 @@ class UserController:
         if UserController.haveSameUser(email):
             return False
 
-        if UserController.isRootUser(email):
-            return False
 
         user = User()
         user.email = email
         user.username = email.split('@')[0]
         user.is_admin = False
+        if UserController.isRootUser(email):
+            user.is_admin = True
         user.put()
+
+        return True
+
+    @staticmethod
+    def delUser(email):
+        if not UserController.haveSameUser(email):
+            return False
+
+        user = UserController.findUser(email)
+        user.key.delete()
 
         return True
 
@@ -58,13 +68,5 @@ class UserController:
 
     @staticmethod
     def isRootUser(email):
-        if config.ROOT_EMAIL == email:
-            user = User()
-            user.email = email
-            user.username = email.split('@')[0]
-            user.is_admin = True
-            user.put()
-            return True
-        else:
-            return False
+        return config.ROOT_EMAIL == email
 
