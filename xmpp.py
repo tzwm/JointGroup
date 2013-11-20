@@ -5,7 +5,8 @@ import group_controller
 import webapp2
 from google.appengine.api import xmpp
 from google.appengine.ext.webapp import xmpp_handlers
-from google.appengine.ext.webapp.util import run_wsgi_app
+from google.appengine.api import urlfetch
+from google.appengine.api import app_identity
 
 
 class XMPPHandler(xmpp_handlers.CommandHandler):
@@ -19,7 +20,11 @@ class XMPPHandler(xmpp_handlers.CommandHandler):
         chat_controller.ChatController().sendToAll(sender, message.body)
 
     def test_command(self, message=None):
-        message.reply("great.")
+        url = "http://" + app_identity.get_default_version_hostname() + "/getXML"
+        #url = "http://tzwmtest3.appspot.com/getXML"
+        result = urlfetch.fetch(url, deadline=5)
+        if result.status_code == 200:
+            message.reply(result.content)
 
     def list_command(self, message=None):
         users = user_controller.UserController.getAllUsers()
@@ -46,12 +51,4 @@ class XMPPHandler(xmpp_handlers.CommandHandler):
         group_controller.GroupController.addGroup(content)
 
 
-app = webapp2.WSGIApplication([('/_ah/xmpp/message/chat/', XMPPHandler)],
-                              debug=True)
 
-
-def main():
-    run_wsgi_app(app)
-
-if __name__ == "__main__":
-    main()
