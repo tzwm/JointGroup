@@ -7,7 +7,7 @@ class ChatController:
 
     @staticmethod
     def sendToAll(sender, content):
-        content = sender + ": " + content
+        content = sender.split('@')[0] + ": " + content
 
         users = user_controller.UserController.getAllUsers()
         for user in users:

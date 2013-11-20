@@ -20,6 +20,13 @@ class XMPPHandler(xmpp_handlers.CommandHandler):
     def test_command(self, message=None):
         message.reply("greate.")
 
+    def list_command(self, message=None):
+        users = user_controller.UserController.getAllUsers()
+        lists = ""
+        for user in users:
+            lists = lists + user.email + '\n'
+        message.reply(lists)
+
 
 app = webapp2.WSGIApplication([('/_ah/xmpp/message/chat/', XMPPHandler)],
                               debug=True)
