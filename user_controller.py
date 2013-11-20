@@ -20,6 +20,8 @@ class UserController:
         if UserController.haveSameUser(email):
             return False
 
+        if UserController.isBot(email):
+            return False
 
         user = User()
         user.email = email
@@ -69,4 +71,8 @@ class UserController:
     @staticmethod
     def isRootUser(email):
         return config.ROOT_EMAIL == email
+
+    @staticmethod
+    def isBot(email):
+        return not email.find('@appspot.com') == -1
 

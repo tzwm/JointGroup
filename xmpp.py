@@ -1,5 +1,6 @@
 import user_controller
 import chat_controller
+import group_controller
 
 import webapp2
 from google.appengine.api import xmpp
@@ -18,7 +19,7 @@ class XMPPHandler(xmpp_handlers.CommandHandler):
         chat_controller.ChatController().sendToAll(sender, message.body)
 
     def test_command(self, message=None):
-        message.reply("greate.")
+        message.reply("great.")
 
     def list_command(self, message=None):
         users = user_controller.UserController.getAllUsers()
@@ -28,7 +29,7 @@ class XMPPHandler(xmpp_handlers.CommandHandler):
         message.reply(lists)
 
     def delUser_command(self, message=None):
-        sender  = message.sender.split('/')[0]
+        sender = message.sender.split('/')[0]
         if not user_controller.UserController.isRootUser(sender):
             message.reply("Sorry. Permission denied.")
             return False
@@ -39,6 +40,10 @@ class XMPPHandler(xmpp_handlers.CommandHandler):
             message.reply("Deleted successfully.")
         else:
             message.reply("Delete failed.")
+
+    def addGroup_command(self, message=None):
+        content = message.body.split('/addGroup')[1].strip()
+        group_controller.GroupController.addGroup(content)
 
 
 app = webapp2.WSGIApplication([('/_ah/xmpp/message/chat/', XMPPHandler)],
