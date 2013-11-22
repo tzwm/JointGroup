@@ -1,5 +1,6 @@
 from google.appengine.ext import ndb
 
+import xml.etree.ElementTree as ET
 
 class Group(ndb.Model):
     groupname = ndb.StringProperty()
