@@ -1,4 +1,4 @@
-import xmpp
+import XMPPHandler
 
 import webapp2
 from google.appengine.ext.webapp.util import run_wsgi_app
@@ -11,7 +11,7 @@ class GetXML(webapp2.RequestHandler):
 
 
 app = webapp2.WSGIApplication([
-    ('/_ah/xmpp/message/chat/', xmpp.XMPPHandler),
+    ('/_ah/xmpp/message/chat/', XMPPHandler.XMPPHandler),
     ('/getXML', GetXML)],
     debug=True)
 
