@@ -66,7 +66,7 @@ class XMPPHandler(xmpp_handlers.CommandHandler):
         else:
             message.reply("To add father group successfully.")
 
-        myEmail = app_identity.get_default_version_hostname()
+        myEmail = app_identity.get_application_id() + "@appspot.com"
         xmpp.send_message(content, '/addChildGroup '+ myEmail)
         return True
 
@@ -79,4 +79,3 @@ class XMPPHandler(xmpp_handlers.CommandHandler):
         content = message.body.split('/addChildGroup')[1].strip()
         child_group_controller.ChildGroupController.addChildGroup(content)
         return True
-
