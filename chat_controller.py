@@ -19,7 +19,12 @@ def sendToAllUsers(sender, content):
 
 
 def sendToAllChildGroups(sender, content):
-    content = sender.split('@')[0] + ": " + content
+    if sender.split('@')[1] == "appspot.com":
+        content = sender.split('@')[0] + '-' + content
+    else:
+        content = sender.split('@')[0] + ": " + content
+
     groups = group_controller.getAllChildGroups()
     for group in groups:
         xmpp.send_message(group.email, content)
+
