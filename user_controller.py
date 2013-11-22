@@ -3,9 +3,9 @@ from google.appengine.ext import ndb
 
 
 class User(ndb.Model):
-    username = ndb.StringProperty()
-    email = ndb.StringProperty()
-    is_admin = ndb.BooleanProperty()
+    username = ndb.StringProperty(required=True)
+    email = ndb.StringProperty(required=True)
+    is_admin = ndb.BooleanProperty(required=True, default=False)
     created_at = ndb.DateTimeProperty(auto_now_add=True)
 
 
@@ -23,10 +23,8 @@ class UserController:
         if UserController.isBot(email):
             return False
 
-        user = User()
-        user.email = email
-        user.username = email.split('@')[0]
-        user.is_admin = False
+        user = User(email=email,
+                    username=email.split('@')[0])
         if UserController.isRootUser(email):
             user.is_admin = True
         user.put()

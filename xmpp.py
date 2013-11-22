@@ -1,6 +1,6 @@
 import user_controller
 import chat_controller
-import group_controller
+import child_group_controller
 
 import webapp2
 from google.appengine.api import xmpp
@@ -17,7 +17,8 @@ class XMPPHandler(xmpp_handlers.CommandHandler):
 
         user_controller.UserController().addUser(sender)
 
-        chat_controller.ChatController().sendToAll(sender, message.body)
+        chat_controller.ChatController().sendToAllUsers(sender, message.body)
+        chat_controller.ChatController().sendToAllGroups(sender, message.body)
 
     def test_command(self, message=None):
         url = "http://" + app_identity.get_default_version_hostname() + "/getXML"
@@ -25,6 +26,12 @@ class XMPPHandler(xmpp_handlers.CommandHandler):
         result = urlfetch.fetch(url, deadline=5)
         if result.status_code == 200:
             message.reply(result.content)
+
+    def test1_command(self, message=None):
+        xmpp.send_message('tzwmtest@appspot.com', '/test2')
+
+    def test2_command(self, message=None):
+        message.reply('ok')
 
     def list_command(self, message=None):
         users = user_controller.UserController.getAllUsers()
@@ -46,9 +53,30 @@ class XMPPHandler(xmpp_handlers.CommandHandler):
         else:
             message.reply("Delete failed.")
 
-    def addGroup_command(self, message=None):
-        content = message.body.split('/addGroup')[1].strip()
-        group_controller.GroupController.addGroup(content)
+    def addFatherGroup_command(self, message=None):
+        sender = message.sender.split('/')[0]
+        if not user_controller.UserController.isRootUser(sender):
+            message.reply("Sorry. Permission denied.")
+            return False
 
+        content = message.body.split('/addFatherGroup')[1].strip()
+        if not child_group_controller.ChildGroupController.addFatherGroup(content):
+            message.reply("Sorry. This group already had the father group.")
+            return False
+        else:
+            message.reply("To add father group successfully.")
 
+        myEmail = app_identity.get_default_version_hostname()
+        xmpp.send_message(content, '/addChildGroup '+ myEmail)
+        return True
+
+    def addChildGroup_command(self, message=None):
+        sender = message.sender.split('/')[0]
+        if not user_controller.UserController.isBot(sender):
+            message.reply("Sorry. Permission denied.")
+            return False
+
+        content = message.body.split('/addChildGroup')[1].strip()
+        child_group_controller.ChildGroupController.addChildGroup(content)
+        return True
 
