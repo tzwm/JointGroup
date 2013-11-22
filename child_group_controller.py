@@ -7,54 +7,51 @@ class ChildGroup(ndb.Model):
     email = ndb.StringProperty(required=True)
     added_at = ndb.DateTimeProperty(auto_now_add=True)
 
-class ChildGroupController:
 
-    @staticmethod
-    def getAllChildGroups():
-        return ChildGroup.query().fetch()
+def findChildGroup(email):
+    q = ChildGroup.query(ChildGroup.email == email)
+    return q.get()
 
-    @staticmethod
-    def addFatherGroup(email):
-        if config.FATHER_GROUP_EMAIL!="":
-            return False
 
-        config.FATHER_GROUP_EMAIL = email
+def haveSameChildGroup(email):
+    q = ChildGroup.query(ChildGroup.email == email)
+    if q.count() > 0:
         return True
+    else:
+        return False
 
-    @staticmethod
-    def delFatherGroup():
-        config.FATHER_GROUP_EMAIL = ""
 
-    @staticmethod
-    def addChildGroup(email):
-        if ChildGroupController.haveSameChildGroup(email):
-            return False
+def getAllChildGroups():
+    return ChildGroup.query().fetch()
 
-        group = ChildGroup(email=email)
-        group.put()
 
-        return True
+def addFatherGroup(email):
+    if config.FATHER_GROUP_EMAIL != "":
+        return False
 
-    @staticmethod
-    def delChildGroup(email):
-        if not ChildGroupController.haveSameChildGroup(email):
-            return False
+    config.FATHER_GROUP_EMAIL = email
+    return True
 
-        group = ChildGroupController.findChildGroup(email)
-        group.key.delete()
 
-        return True
+def delFatherGroup():
+    config.FATHER_GROUP_EMAIL = ""
 
-    @staticmethod
-    def findChildGroup(email):
-        q = ChildGroup.query(ChildGroup.email == email)
-        return q.get()
 
-    @staticmethod
-    def haveSameChildGroup(email):
-        q = ChildGroup.query(ChildGroup.email == email)
-        if q.count() > 0:
-            return True
-        else:
-            return False
+def addChildGroup(email):
+    if haveSameChildGroup(email):
+        return False
 
+    group = ChildGroup(email=email)
+    group.put()
+
+    return True
+
+
+def delChildGroup(email):
+    if not haveSameChildGroup(email):
+        return False
+
+    group = findChildGroup(email)
+    group.key.delete()
+
+    return True

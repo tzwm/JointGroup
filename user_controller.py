@@ -9,68 +9,64 @@ class User(ndb.Model):
     created_at = ndb.DateTimeProperty(auto_now_add=True)
 
 
-class UserController:
-
-    @staticmethod
-    def getAllUsers():
-        return User.query().fetch()
-
-    @staticmethod
-    def addUser(email):
-        if UserController.haveSameUser(email):
-            return False
-
-        if UserController.isBot(email):
-            return False
-
-        user = User(email=email,
-                    username=email.split('@')[0])
-        if UserController.isRootUser(email):
-            user.is_admin = True
-        user.put()
-
+def haveSameUser(email):
+    q = User.query(User.email == email)
+    if q.count() > 0:
         return True
+    else:
+        return False
 
-    @staticmethod
-    def delUser(email):
-        if not UserController.haveSameUser(email):
-            return False
 
-        user = UserController.findUser(email)
-        user.key.delete()
+def findUser(email):
+    q = User.query(User.email == email)
+    return q.get()
 
-        return True
 
-    @staticmethod
-    def changeUsername(email, username):
-        user = UserController.findUser(email)
-        user.username = username
-        user.put()
+def isRootUser(email):
+    return config.ROOT_EMAIL == email
 
-    @staticmethod
-    def addAdmin(email):
-        user = UserController.findUser(email)
+
+def isBot(email):
+    return not email.find('@appspot.com') == -1
+
+
+def getAllUsers():
+    return User.query().fetch()
+
+
+def addUser(email):
+    if haveSameUser(email):
+        return False
+
+    if isBot(email):
+        return False
+
+    user = User(email=email,
+                username=email.split('@')[0])
+    if isRootUser(email):
         user.is_admin = True
         user.put()
 
-    @staticmethod
-    def haveSameUser(email):
-        q = User.query(User.email == email)
-        if q.count() > 0:
-            return True
-        else:
-            return False
+    return True
 
-    @staticmethod
-    def findUser(email):
-        q = User.query(User.email == email)
-        return q.get()
 
-    @staticmethod
-    def isRootUser(email):
-        return config.ROOT_EMAIL == email
+def delUser(email):
+    if not haveSameUser(email):
+        return False
 
-    @staticmethod
-    def isBot(email):
-        return not email.find('@appspot.com') == -1
+    user = findUser(email)
+    user.key.delete()
 
+    return True
+
+
+def changeUsername(email, username):
+    user = findUser(email)
+    user.username = username
+    user.put()
+
+
+def addAdmin(email):
+    user = findUser(email)
+    user.is_admin = True
+    user.put()
