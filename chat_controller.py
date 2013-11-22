@@ -18,7 +18,7 @@ def sendToAllUsers(sender, content):
         xmpp.send_message(user.email, content)
 
 
-def sendToAllGroups(sender, content):
+def sendToAllChildGroups(sender, content):
     content = sender.split('@')[0] + ": " + content
     groups = group_controller.getAllChildGroups()
     for group in groups:

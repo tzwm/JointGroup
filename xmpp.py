@@ -19,7 +19,7 @@ class XMPPHandler(xmpp_handlers.CommandHandler):
         user_controller.addUser(sender)
 
         chat_controller.sendToAllUsers(sender, message.body)
-        chat_controller.sendToAllGroups(sender, message.body)
+        chat_controller.sendToAllChildGroups(sender, message.body)
 
     def test_command(self, message=None):
         url = "http://" + app_identity.get_default_version_hostname() + "/getXML"
@@ -81,15 +81,45 @@ class XMPPHandler(xmpp_handlers.CommandHandler):
             message.reply("To add father group successfully.")
 
         myEmail = app_identity.get_application_id() + "@appspot.com"
-        xmpp.send_message(content, '/addChildGroup '+ myEmail)
+        xmpp.send_message(content, '/addChildGroupBot '+ myEmail)
         return True
 
-    def addChildGroup_command(self, message=None):
+    def delFatherGroup_command(self, message=None):
+        sender = message.sender.split('/')[0]
+        if not user_controller.isRootUser(sender):
+            message.reply("Sorry. Permission denied.")
+            return False
+
+        content = group_controller.delFatherGroup()
+        if not content:
+            message.reply("Sorry. This group didn't have father group.")
+            return False
+        else:
+            message.reply("Deleted successfully.")
+
+        myEmail = app_identity.get_application_id() + "@appspot.com"
+        xmpp.send_message(content, '/delChildGroupBot '+ myEmail)
+        return True
+
+    def addChildGroupBot_command(self, message=None):
         sender = message.sender.split('/')[0]
         if not user_controller.isBot(sender):
             message.reply("Sorry. Permission denied.")
             return False
 
-        content = message.body.split('/addChildGroup')[1].strip()
+        content = message.body.split('/addChildGroupBot')[1].strip()
         group_controller.addChildGroup(content)
         return True
+
+    def delChildGroupBot_command(self, message=None):
+        sender = message.sender.split('/')[0]
+        if not user_controller.isBot(sender):
+            message.reply("Sorry. Permission denied.")
+            return False
+
+        content = message.body.split('/delChildGroupBot')[1].strip()
+        group_controller.delChildGroup(content)
+        return True
+
+    def help_command(self, message=None):
+        message.reply(config.HELP_MANUAL)

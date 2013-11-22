@@ -1,4 +1,17 @@
 ROOT_EMAIL = ""
 GROUP_NAME = ""
-FATHER_GROUP_EMAIL = ""
 
+HELP_MANUAL = '''
+====User Command====
+/help : show manual
+/list : list all members
+/listChildGroup : list all child group
+/displayFatherGroup : display father group
+/displayRoot : display administrator
+
+====Admin Command====
+/addFatherGroup father_email@appspot.com : add father group
+/delFatherGroup father_email@appspot.com : delete father group
+/delUser user_email@gmail.com : delete the user
+
+'''

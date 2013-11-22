@@ -59,12 +59,14 @@ def addFatherGroup(email):
 
 
 def delFatherGroup():
-    if not haveFatherGroup(email):
+    q = FatherGroup.query()
+    if q.count() > 0:
+        ret = q.get().email
+        q.get().key.delete()
+        return ret
+    else:
         return False
 
-    father = findFatherGroup(email)
-    father.key.delete()
-    return True
 
 def addChildGroup(email):
     if haveSameChildGroup(email):
