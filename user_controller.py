@@ -45,7 +45,7 @@ def addUser(email):
                 username=email.split('@')[0])
     if isRootUser(email):
         user.is_admin = True
-        user.put()
+    user.put()
 
     return True
 

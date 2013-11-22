@@ -1,6 +1,6 @@
 import user_controller
 import chat_controller
-import child_group_controller
+import group_controller
 import config
 
 import webapp2
@@ -21,8 +21,6 @@ class XMPPHandler(xmpp_handlers.CommandHandler):
         chat_controller.sendToAllUsers(sender, message.body)
         chat_controller.sendToAllGroups(sender, message.body)
 
-        xmpp.send_message('tzwmtest2@apspot.com', 'ok')
-
     def test_command(self, message=None):
         url = "http://" + app_identity.get_default_version_hostname() + "/getXML"
         #url = "http://tzwmtest3.appspot.com/getXML"
@@ -38,17 +36,17 @@ class XMPPHandler(xmpp_handlers.CommandHandler):
             message.reply(lists)
 
     def listChildGroup_command(self, message=None):
-        groups = child_group_controller.getAllChildGroups()
+        groups = group_controller.getAllChildGroups()
         lists = ""
         for group in groups:
             lists = lists + group.email + '\n'
             message.reply(lists)
 
     def displayFatherGroup_command(self, message=None):
-        if config.FATHER_GROUP_EMAIL != "":
-            message.reply(config.FATHER_GROUP_EMAIL)
+        if group_controller.FatherGroup.query().count() > 0:
+            message.reply(group_controller.FatherGroup.query().get())
         else:
-            message.reply("No fathre group.")
+            message.reply("No Father Group.")
 
     def displayRoot_command(self, message=None):
         if config.ROOT_EMAIL != "":
@@ -76,7 +74,7 @@ class XMPPHandler(xmpp_handlers.CommandHandler):
             return False
 
         content = message.body.split('/addFatherGroup')[1].strip()
-        if not child_group_controller.addFatherGroup(content):
+        if not group_controller.addFatherGroup(content):
             message.reply("Sorry. This group already had the father group.")
             return False
         else:
@@ -93,5 +91,5 @@ class XMPPHandler(xmpp_handlers.CommandHandler):
             return False
 
         content = message.body.split('/addChildGroup')[1].strip()
-        child_group_controller.addChildGroup(content)
+        group_controller.addChildGroup(content)
         return True
