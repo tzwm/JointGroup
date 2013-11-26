@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from google.appengine.ext import ndb
 from google.appengine.api import app_identity
 
@@ -11,6 +13,27 @@ class ChildGroup(ndb.Model):
     email = ndb.StringProperty(required=True)
     added_at = ndb.DateTimeProperty(auto_now_add=True)
 
+
+class Group(ndb.Model):
+    name = ndb.StringProperty()
+
+
+def getGroupName():
+    q = Group.query()
+    if q.count() > 0:
+        return q.get().name
+    else:
+        return False
+
+
+def setGroupName(content):
+    q = Group.query()
+    if q.count() > 0:
+        g = q.get()
+    else:
+        g = Group(name=content)
+    g.name = content
+    g.put()
 
 def findChildGroup(email):
     q = ChildGroup.query(ChildGroup.email == email)

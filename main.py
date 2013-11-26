@@ -1,7 +1,11 @@
+# -*- coding: utf-8 -*-
+
 import XMPPHandler
 
 import webapp2
 from google.appengine.ext.webapp.util import run_wsgi_app
+
+import sys
 
 
 class GetXML(webapp2.RequestHandler):

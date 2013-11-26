@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import user_controller
 import chat_controller
 import group_controller
@@ -41,6 +43,15 @@ class XMPPHandler(xmpp_handlers.CommandHandler):
         for group in groups:
             lists = lists + group.email + '\n'
             message.reply(lists)
+
+    def displayGroupName_command(self, message=None):
+        content = group_controller.getGroupName()
+        message.reply(content)
+
+    def setGroupName_command(self, message=None):
+        content = message.body.split('/setGroupName')[1]
+        content = content.strip()
+        group_controller.setGroupName(content)
 
     def displayFatherGroup_command(self, message=None):
         if group_controller.FatherGroup.query().count() > 0:
