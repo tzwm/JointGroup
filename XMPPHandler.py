@@ -132,5 +132,13 @@ class XMPPHandler(xmpp_handlers.CommandHandler):
         group_controller.delChildGroup(content)
         return True
 
+    def toGroup_command(self, message=None):
+        content = message.body.split('/toGroup')[1].strip()
+        sender = message.sender.split('/')[0]
+        sender = sender.split('@')[0]
+        receiver = content.split(' ')[0]
+        content = group_controller.getGroupName() + '-' + sender + ':' + content.split(' ')[1]
+        xmpp.send_message(receiver, content)
+
     def help_command(self, message=None):
         message.reply(config.HELP_MANUAL)

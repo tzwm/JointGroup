@@ -1,8 +1,6 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 ROOT_EMAIL = ""
-GROUP_NAME = ""
 
 HELP_MANUAL = '''
 ====User Command====
@@ -11,8 +9,11 @@ HELP_MANUAL = '''
 /listChildGroup : list all child group
 /displayFatherGroup : display father group
 /displayRoot : display administrator
+/toGroup group@address.com content : push message to other group
+/displayGroupName : display this group's name
 
 ====Admin Command====
+/setGroupName group_name
 /addFatherGroup father_email@appspot.com : add father group
 /delFatherGroup father_email@appspot.com : delete father group
 /delUser user_email@gmail.com : delete the user
