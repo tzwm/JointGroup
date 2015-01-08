@@ -35,14 +35,16 @@ class XMPPHandler(xmpp_handlers.CommandHandler):
         lists = ""
         for user in users:
             lists = lists + user.email + '\n'
-            message.reply(lists)
+
+        message.reply(lists)
 
     def listChildGroup_command(self, message=None):
         groups = group_controller.getAllChildGroups()
         lists = ""
         for group in groups:
             lists = lists + group.email + '\n'
-            message.reply(lists)
+
+        message.reply(lists)
 
     def displayGroupName_command(self, message=None):
         content = group_controller.getGroupName()
